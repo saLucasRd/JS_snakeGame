@@ -132,7 +132,7 @@ function verificarColisao() {
         if ((z > 4) && (x[0] == x[z]) && (y[0] == y[z])) {
             noJogo = false;
         }
-        if ((x[0] == obs_x[i]) && (y[0] == obs_y[i])) {
+        if ((x[0] == obs_x) && (y[0] == obs_y)) {
             noJogo = false;
         }
     }
