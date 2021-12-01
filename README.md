@@ -15,10 +15,10 @@ var bola;
 var obstaculo;
 
 var pontos;
-var maca_x;
-var maca_y;
-var obs_x;
-var obs_y;
+var maca_x = [];
+var maca_y = [];
+var obs_x = [];
+var obs_y = [];
 
 var paraEsquerda = false;
 var paraDireita = true;
@@ -27,7 +27,8 @@ var paraBaixo = false;
 var noJogo = true;    
 
 const TAMANHO_PONTO = 10;
-const ALEATORIO_MAXIMO = 29;
+const ALEATORIO_MAXIMOx = 59;
+const ALEATORIO_MAXIMOy = 29;
 const ATRASO = 140;
 const C_ALTURA = 300;
 const C_LARGURA = 600;    
@@ -82,19 +83,25 @@ function criarCobra() {
     pontos = 3;
 	
     for (var z = 0; z < pontos; z++) {
-        x[z] = Math.floor(Math.random() * C_LARGURA)
-        y[z] = Math.floor(Math.random() * C_ALTURA)
+        x[z] = Math.floor(Math.random() *  ALEATORIO_MAXIMOx)
+        y[z] = Math.floor(Math.random() *  ALEATORIO_MAXIMOy)
     }
 }
 
 function localizarMaca() {
-        maca_x = Math.floor(Math.random() * C_LARGURA - TAMANHO_PONTO)
-        maca_y = Math.floor(Math.random() * C_ALTURA - TAMANHO_PONTO) 
-}    
+    for (var i = 0; i < 15; i++) {
+        maca_x[i] = Math.floor(Math.random() * ALEATORIO_MAXIMOx) * TAMANHO_PONTO
+        maca_y[i] = Math.floor(Math.random() * ALEATORIO_MAXIMOy) *TAMANHO_PONTO
+
+    }
+        }    
 
 function localizarObs() { 
-        obs_x = Math.floor(Math.random() * C_LARGURA - TAMANHO_PONTO) 
-        obs_y = Math.floor(Math.random() * C_ALTURA - TAMANHO_PONTO) 
+    for (var i = 0; i < 15; i++) {
+        obs_x[i] = Math.floor(Math.random() * ALEATORIO_MAXIMOx) * TAMANHO_PONTO
+        obs_y[i] = Math.floor(Math.random() * ALEATORIO_MAXIMOy) *TAMANHO_PONTO
+
+    }
 
 } 
 
@@ -110,10 +117,12 @@ function cicloDeJogo() {
 }
 
 function verificarMaca() {
-    if ((x[0] == maca_x) && (y[0] == maca_y)) {
-        pontos++;
-        localizarMaca();
-    }
+        for (var i ; i < 15; i++) {
+            if ((x[0] == maca_x[i]) && (y[0] == maca_y[i])) {
+            pontos++;
+            break;
+            }
+        }
 }    
 
 
@@ -123,7 +132,7 @@ function verificarColisao() {
         if ((z > 4) && (x[0] == x[z]) && (y[0] == y[z])) {
             noJogo = false;
         }
-        if ((x[0] == obs_x) && (y[0] == obs_y)) {
+        if ((x[0] == obs_x[i]) && (y[0] == obs_y[i])) {
             noJogo = false;
         }
     }
@@ -158,8 +167,14 @@ function fazerDesenho() {
 	ctx.fillRect(0, 0, C_LARGURA, C_ALTURA);
 	
     if (noJogo) {
-        ctx.drawImage(maca, maca_x, maca_y);
-        ctx.drawImage(obstaculo, obs_x, obs_y);
+        for (var i = 0; i < 15; i++){
+        ctx.drawImage(maca, maca_x[i], maca_y[i]);
+        }
+
+        for (var i = 0; i < 15; i++){
+            ctx.drawImage(obstaculo, obs_x[i], obs_y[i]);
+            }
+        
 		
         for (var z = 0; z < pontos; z++) {
             if (z == 0) {
