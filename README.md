@@ -57,7 +57,7 @@ function iniciar() {
     carregarImagens();
     criarCobra();
     localizarMaca();
-    fazerObstaculos();
+    localizarObs();
 
 
 
@@ -75,7 +75,7 @@ function carregarImagens() {
     maca.src = "maca.png"; 
 
     obstaculo = new Image();
-    obstaculo.src = "obstacle.png";
+    obstaculo.src = "obstaculo.png";
 }
 
 function criarCobra() {
@@ -88,17 +88,14 @@ function criarCobra() {
 }
 
 function localizarMaca() {
-    for (var i = 0; i < 8; i++) {
-        maca_x = Math.floor(Math.random() * C_LARGURA)
-        maca_y = Math.floor(Math.random() * C_ALTURA)
-    }
+        maca_x = Math.floor(Math.random() * C_LARGURA - TAMANHO_PONTO)
+        maca_y = Math.floor(Math.random() * C_ALTURA - TAMANHO_PONTO) 
 }    
 
-function fazerObstaculos() {
-    for (var i = 0; i < 8; i++) {
-        obs_x = Math.floor(Math.random() * C_LARGURA)
-        obs_y = Math.floor(Math.random() * C_ALTURA)
-    }
+function localizarObs() { 
+        obs_x = Math.floor(Math.random() * C_LARGURA - TAMANHO_PONTO) 
+        obs_y = Math.floor(Math.random() * C_ALTURA - TAMANHO_PONTO) 
+
 } 
 
 
@@ -108,7 +105,6 @@ function cicloDeJogo() {
         verificarColisao();
         mover();
         fazerDesenho();
-        //fazerObstaculos();
         setTimeout("cicloDeJogo()", ATRASO);
     }
 }
@@ -127,7 +123,9 @@ function verificarColisao() {
         if ((z > 4) && (x[0] == x[z]) && (y[0] == y[z])) {
             noJogo = false;
         }
-        if ()
+        if ((x[0] == obs_x) && (y[0] == obs_y)) {
+            noJogo = false;
+        }
     }
     
 }
@@ -161,7 +159,7 @@ function fazerDesenho() {
 	
     if (noJogo) {
         ctx.drawImage(maca, maca_x, maca_y);
-        
+        ctx.drawImage(obstaculo, obs_x, obs_y);
 		
         for (var z = 0; z < pontos; z++) {
             if (z == 0) {
