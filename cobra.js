@@ -18,6 +18,7 @@ var maca;
 var bola;
 var obstaculo;
 var vidas = 1;
+var totalMaca = 15;
 
 var pontos = 3;
 var maca_x = [];
@@ -105,7 +106,7 @@ function criarCobra() {
 }
 
 function localizarMaca() {
-    for (var i = 0; i < 15; i++) {
+    for (var i = 0; i < totalMaca; i++) {
         maca_x[i] = Math.floor(Math.random() * ALEATORIO_MAXIMOx) * TAMANHO_PONTO
         maca_y[i] = Math.floor(Math.random() * ALEATORIO_MAXIMOy) * TAMANHO_PONTO
 
@@ -113,7 +114,7 @@ function localizarMaca() {
 }
 
 function localizarObs() {
-    for (var i = 0; i < 15; i++) {
+    for (var i = 0; i < totalMaca; i++) {
         obs_x[i] = Math.floor(Math.random() * ALEATORIO_MAXIMOx) * TAMANHO_PONTO
         obs_y[i] = Math.floor(Math.random() * ALEATORIO_MAXIMOy) * TAMANHO_PONTO
 
@@ -129,6 +130,9 @@ function cicloDeJogo() {
         if (vidas <= 0) {
             noJogo = false;
         }
+        if (pontos >= totalMaca + 3) {
+            noJogo = false;
+        }
         mover();
         fazerDesenho();
 
@@ -141,7 +145,7 @@ function cicloDeJogo() {
 
 function verificarMaca() {
 
-    for (var i = 0; i < 15; i++) {
+    for (var i = 0; i < totalMaca; i++) {
         if ((x[0] == maca_x[i]) && (y[0] == maca_y[i])) {
             ctx.fillStyle = scoreColorPrimary
             ctx.fillRect(C_LARGURA + 120, 60, 80, 20)
@@ -180,7 +184,7 @@ function verificarColisao() {
             noJogo = false;
         }
     }
-    for (var i = 0; i < 15; i++) {
+    for (var i = 0; i < totalMaca; i++) {
         // colisao com os obstaculos
         if ((x[0] == obs_x[i]) && (y[0] == obs_y[i])) {
             ctx.fillStyle = scoreColorPrimary
@@ -242,11 +246,11 @@ function fazerDesenho() {
     ctx.fillRect(0, 0, C_LARGURA, C_ALTURA);
 
     if (noJogo) {
-        for (var i = 0; i < 15; i++) {
+        for (var i = 0; i < totalMaca; i++) {
             ctx.drawImage(maca, maca_x[i], maca_y[i]);
         }
 
-        for (var i = 0; i < 15; i++) {
+        for (var i = 0; i < totalMaca; i++) {
             ctx.drawImage(obstaculo, obs_x[i], obs_y[i]);
         }
 
