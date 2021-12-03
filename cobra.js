@@ -12,7 +12,7 @@ var ctx;
 var scoreColorPrimary = 'Black';
 var scoreColorFont = 'White';
 
-
+var inputName;
 var cabeca;
 var maca;
 var bola;
@@ -40,9 +40,9 @@ var paraBaixo = false;
 var noJogo = true;
 var ATRASO = 120;
 
-
+var contador;
 var minutos = 2;
-var segundos = 0;
+var segundos = 59;
 
 
 
@@ -72,7 +72,9 @@ iniciar(); // Chama função inicial do jogo
 
 
 function iniciar() {
+
     tela = document.getElementById("tela");
+
     ctx = tela.getContext("2d");
     ctx.fillStyle = scoreColorPrimary;
     ctx.fillRect(0, 0, C_LARGURA, C_ALTURA);
@@ -83,20 +85,17 @@ function iniciar() {
     timer();
     
 
-
     carregarImagens();
     carregarSons();
     criarCobra();
     localizarMaca();
     localizarObs();
+
     
     
     setTimeout("cicloDeJogo()", ATRASO);
-    setTimeout("atualizarContador", 1000);
     
 }
-
-
 
 
 function carregarImagens() {
@@ -158,6 +157,8 @@ function localizarObs() {
 
 
 function cicloDeJogo() {
+    
+
     if (noJogo) {
         verificarMaca();
         verificarColisao();
@@ -167,15 +168,20 @@ function cicloDeJogo() {
         if (pontos >= totalMaca + 3) {
             noJogo = false;
         }
+        if (minutos == 0 && segundos == 0) {
+            noJogo = false;
+        }
         mover();
         fazerDesenho();
-        
 
+        
+        setInterval(atualizarContador(), 1000);
         setTimeout("cicloDeJogo()", ATRASO);
-        setTimeout("atualizarContador", 1000);
+        
         
         
     }
+    
 }
 
 function verificarMaca() {
@@ -309,31 +315,31 @@ function fazerDesenho() {
 
 
 function atualizarContador() {
-      
+    ctx.fillStyle = scoreColorPrimary
+    ctx.fillRect(C_LARGURA + 140, 200, 40, 20)
+    segundos--
+    ctx.fillStyle = scoreColorFont
+    ctx.fillText(segundos, C_LARGURA + 140, 220)
+
+    if (segundos == 1 && minutos == 0) {
+        ctx.fillRect(C_LARGURA + 140, 200, 40, 20)
+        segundos == 0
+        ctx.fillStyle = scoreColorFont
+        ctx.fillText(segundos, C_LARGURA + 140, 220)
+    }
+    if (segundos == 0 && minutos >= 1) {
+        ctx.fillStyle = scoreColorPrimary
+        ctx.fillRect(C_LARGURA + 110, 200, 20, 30)
+        minutos--;
+        ctx.fillStyle = scoreColorFont
+        ctx.fillText(minutos, C_LARGURA + 120, 220)
+        segundos = segundos + 59
+    }
     
-    while (minutos >= 0) {
-    ctx.fillStyle = scoreColorPrimary
-    ctx.fillRect(C_LARGURA + 140, 200, 30, 20)
-    segundos--
-    ctx.fillStyle = scoreColorFont
-    ctx.fillText(segundos, C_LARGURA + 140, 220)
-        if (segundos <= 0) {
-                segundos = segundos + 59
-        }
-    ctx.fillStyle = scoreColorPrimary
-    ctx.fillRect(C_LARGURA + 140, 200, 30, 20)
-    segundos--
-    ctx.fillStyle = scoreColorFont
-    ctx.fillText(segundos, C_LARGURA + 140, 220)
+    
+    
               
     }
-
-
-}
-
-        
-    
-    
 
 
 function scoreBoard() {
@@ -346,33 +352,52 @@ function scoreBoard() {
     //escrevendo score
     ctx.fillStyle = scoreColorFont;
     ctx.font = "20px Monospace";
-    ctx.fillText("SCORE: ", C_LARGURA + 50, 80)
+    ctx.fillText("SCORE ", C_LARGURA + 50, 80)
     ctx.fillText(pontos - 3, C_LARGURA + 130, 80)
 }
 function lifeCounter() {
     ctx.fillStyle = scoreColorFont;
     ctx.font = "20px Monospace";
-    ctx.fillText("VIDAS: ", C_LARGURA + 50, 150)
+    ctx.fillText("VIDAS ", C_LARGURA + 50, 150)
     ctx.fillText(vidas, C_LARGURA + 130, 150)
 }
 function timer() {
     ctx.fillStyle = scoreColorFont;
     ctx.font = "20px Monospace";
-    ctx.fillText("TEMPO: ", C_LARGURA + 50, 220)
+    ctx.fillText("TEMPO ", C_LARGURA + 50, 220)
     ctx.fillText(minutos, C_LARGURA + 120, 220)
     ctx.fillText(":", C_LARGURA + 130, 220)
-    ctx.fillText(segundos, C_LARGURA + 150, 220)
+    ctx.fillText(segundos, C_LARGURA + 140, 220)
     
 
 }
 
 function fimDeJogo() {
     somMorrer.play();
+    rankScore();
     ctx.fillStyle = "RED";
-    ctx.textBaseline = "middle";
     ctx.textAlign = "center";
     ctx.font = "normal bold 18px Monospace";
-    ctx.fillText("YOU DIED", C_LARGURA / 2, C_ALTURA / 2);
+    ctx.fillText("GAMER OVER", C_LARGURA / 2, C_ALTURA / 4);
+    ctx.fillStyle = "RED";
+    ctx.textAlign = "center";
+    ctx.font = "normal bold 18px Monospace";
+    ctx.fillText(inputName, C_LARGURA / 2, C_ALTURA / 3);
+    ctx.fillStyle = "RED";
+    ctx.textAlign = "center";
+    ctx.font = "normal bold 18px Monospace";
+    ctx.fillText(pontos - 3, C_LARGURA - 210, C_ALTURA - 170);
+    ctx.fillStyle = "RED";
+    ctx.textAlign = "center";
+    ctx.font = "normal bold 18px Monospace";
+    ctx.fillText("PONTUAÇÃO TOTAL:", C_LARGURA / 2 , C_ALTURA - 170);
+
+    
+    
+}
+
+function rankScore() {
+    inputName = prompt("Digite suas Inicias");
 }
 
 function verificarTecla(e) {
