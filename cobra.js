@@ -17,8 +17,14 @@ var cabeca;
 var maca;
 var bola;
 var obstaculo;
-var vidas = 1;
+var vidas = 5;
 var totalMaca = 15;
+var totalObs = 10;
+var somComer;
+var somMorrer;
+var somDano;
+var somMusica;
+
 
 var pontos = 3;
 var maca_x = [];
@@ -30,16 +36,26 @@ var paraEsquerda = false;
 var paraDireita = true;
 var paraCima = false;
 var paraBaixo = false;
+
 var noJogo = true;
 var ATRASO = 120;
+
+
+var minutos = 2;
+var segundos = 0;
+
+
+
 
 const TAMANHO_PONTO = 10;
 const ALEATORIO_MAXIMOx = 59;
 const ALEATORIO_MAXIMOy = 29;
 
+//tela
 const C_ALTURA = 300;
 const C_LARGURA = 600;
 
+//controles
 const TECLA_ESQUERDA = 37;
 const TECLA_DIREITA = 39;
 const TECLA_ACIMA = 38;
@@ -53,7 +69,7 @@ onkeydown = verificarTecla; // Define função chamada ao se pressionar uma tecl
 iniciar(); // Chama função inicial do jogo
 
 
-// Definição das funções
+
 
 function iniciar() {
     tela = document.getElementById("tela");
@@ -65,18 +81,19 @@ function iniciar() {
     scoreBoard()
     lifeCounter();
     timer();
+    
 
 
     carregarImagens();
+    carregarSons();
     criarCobra();
     localizarMaca();
     localizarObs();
-
-
-
-
-
+    
+    
     setTimeout("cicloDeJogo()", ATRASO);
+    setTimeout("atualizarContador", 1000);
+    
 }
 
 
@@ -96,6 +113,23 @@ function carregarImagens() {
     obstaculo.src = "obstaculo.png";
 }
 
+function carregarSons() {
+    somComer = new Audio();
+    somComer.src = "eat.mp3"
+
+    somMorrer = new Audio();
+    somMorrer.src = "death.mp3"
+
+    somDano = new Audio();
+    somDano.src = "hurt.mp3"
+
+
+}
+
+setTimeout(function() {
+    document.getElementById("somMusica").play();
+}, 120000)
+
 function criarCobra() {
 
 
@@ -114,7 +148,7 @@ function localizarMaca() {
 }
 
 function localizarObs() {
-    for (var i = 0; i < totalMaca; i++) {
+    for (var i = 0; i < totalObs; i++) {
         obs_x[i] = Math.floor(Math.random() * ALEATORIO_MAXIMOx) * TAMANHO_PONTO
         obs_y[i] = Math.floor(Math.random() * ALEATORIO_MAXIMOy) * TAMANHO_PONTO
 
@@ -135,11 +169,12 @@ function cicloDeJogo() {
         }
         mover();
         fazerDesenho();
-
-
-
+        
 
         setTimeout("cicloDeJogo()", ATRASO);
+        setTimeout("atualizarContador", 1000);
+        
+        
     }
 }
 
@@ -150,6 +185,7 @@ function verificarMaca() {
             ctx.fillStyle = scoreColorPrimary
             ctx.fillRect(C_LARGURA + 120, 60, 80, 20)
             pontos++;
+            somComer.play();
             ctx.fillStyle = scoreColorFont
             ctx.fillText(pontos - 3, C_LARGURA + 120, 80)
 
@@ -182,14 +218,16 @@ function verificarColisao() {
     for (var z = pontos; z > 0; z--) {
         if ((z > 4) && (x[0] == x[z]) && (y[0] == y[z])) {
             noJogo = false;
+            
         }
     }
-    for (var i = 0; i < totalMaca; i++) {
+    for (var i = 0; i < totalObs; i++) {
         // colisao com os obstaculos
         if ((x[0] == obs_x[i]) && (y[0] == obs_y[i])) {
             ctx.fillStyle = scoreColorPrimary
             ctx.fillRect(C_LARGURA + 120, 130, 80, 20)
             vidas--;
+            somDano.play();
             ctx.fillStyle = scoreColorFont
             ctx.fillText(vidas, C_LARGURA + 120, 150)
 
@@ -250,7 +288,7 @@ function fazerDesenho() {
             ctx.drawImage(maca, maca_x[i], maca_y[i]);
         }
 
-        for (var i = 0; i < totalMaca; i++) {
+        for (var i = 0; i < totalObs; i++) {
             ctx.drawImage(obstaculo, obs_x[i], obs_y[i]);
         }
 
@@ -268,9 +306,40 @@ function fazerDesenho() {
     }
 }
 
+
+
+function atualizarContador() {
+      
+    
+    while (minutos >= 0) {
+    ctx.fillStyle = scoreColorPrimary
+    ctx.fillRect(C_LARGURA + 140, 200, 30, 20)
+    segundos--
+    ctx.fillStyle = scoreColorFont
+    ctx.fillText(segundos, C_LARGURA + 140, 220)
+        if (segundos <= 0) {
+                segundos = segundos + 59
+        }
+    ctx.fillStyle = scoreColorPrimary
+    ctx.fillRect(C_LARGURA + 140, 200, 30, 20)
+    segundos--
+    ctx.fillStyle = scoreColorFont
+    ctx.fillText(segundos, C_LARGURA + 140, 220)
+              
+    }
+
+
+}
+
+        
+    
+    
+
+
 function scoreBoard() {
     ctx.fillStyle = scoreColorFont;
     ctx.fillRect(C_LARGURA, 0, 5, C_ALTURA);
+
     ctx.fillStyle = scoreColorPrimary;
     ctx.fillRect(C_LARGURA + 5, 0, 200, C_ALTURA);
     //preenchido os retangulos
@@ -278,7 +347,7 @@ function scoreBoard() {
     ctx.fillStyle = scoreColorFont;
     ctx.font = "20px Monospace";
     ctx.fillText("SCORE: ", C_LARGURA + 50, 80)
-    ctx.fillText(pontos - 3, C_LARGURA + 120, 80)
+    ctx.fillText(pontos - 3, C_LARGURA + 130, 80)
 }
 function lifeCounter() {
     ctx.fillStyle = scoreColorFont;
@@ -290,14 +359,20 @@ function timer() {
     ctx.fillStyle = scoreColorFont;
     ctx.font = "20px Monospace";
     ctx.fillText("TEMPO: ", C_LARGURA + 50, 220)
+    ctx.fillText(minutos, C_LARGURA + 120, 220)
+    ctx.fillText(":", C_LARGURA + 130, 220)
+    ctx.fillText(segundos, C_LARGURA + 150, 220)
+    
+
 }
 
 function fimDeJogo() {
-    ctx.fillStyle = scoreColorFont;
+    somMorrer.play();
+    ctx.fillStyle = "RED";
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
     ctx.font = "normal bold 18px Monospace";
-    ctx.fillText("Fim de Jogo", C_LARGURA / 2, C_ALTURA / 2);
+    ctx.fillText("YOU DIED", C_LARGURA / 2, C_ALTURA / 2);
 }
 
 function verificarTecla(e) {
